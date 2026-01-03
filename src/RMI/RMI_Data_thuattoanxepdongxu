@@ -1,0 +1,66 @@
+package RMI;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RMI_Data_fAsccStG {
+
+    public static void main(String[] args) {
+        try {
+            // Kết nối RMI
+            String host = "203.162.10.109";
+            int port = 1099;
+            Registry registry = LocateRegistry.getRegistry(host, port);
+
+            DataService service =
+                    (DataService) registry.lookup("RMIDataService");
+
+            String studentCode = "B22DCAT134";
+            String qCode = "fAsccStG";
+
+            // (a) Nhận amount
+            Integer amount =
+                    (Integer) service.requestData(studentCode, qCode);
+            System.out.println("Amount nhận được: " + amount);
+
+            // (b) Đổi tiền greedy
+            int[] coins = {10, 5, 2, 1};
+            List<Integer> result = new ArrayList<>();
+
+            int temp = amount;
+            for (int coin : coins) {
+                while (temp >= coin) {
+                    result.add(coin);
+                    temp -= coin;
+                }
+            }
+
+            // (c) Tạo chuỗi kết quả ĐÚNG FORMAT
+            String submit;
+            if (temp != 0) {
+                submit = "-1";
+            } else {
+                StringBuilder sb = new StringBuilder();
+                sb.append(result.size()).append("; ");
+                for (int i = 0; i < result.size(); i++) {
+                    sb.append(result.get(i));
+                    if (i < result.size() - 1) {
+                        sb.append(",");
+                    }
+                }
+                submit = sb.toString();
+            }
+
+            System.out.println("Chuỗi gửi server: " + submit);
+
+            // (d) Gửi lại server
+            service.submitData(studentCode, qCode, submit);
+            System.out.println("Đã gửi dữ liệu, client kết thúc.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
