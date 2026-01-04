@@ -20,35 +20,28 @@ public class TCP_ByteStream {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        try(Socket socket = new Socket()){
+        try(Socket socket=new Socket("203.162.10.109", 2208)) {
             
-            String serverHost = "203.162.10.109"; // hoặc IP server
-            int serverPort = 2206;
-            String studentCode = "B22DCDT147"; // đổi theo mã sinh viên của bạn
-            String qCode = "14shBC14";
-            
-            socket.connect(new InetSocketAddress(serverHost, serverPort));
+                        
+            //socket.connect( new InetSocketAddress("203.162.10.109", 2208));
             socket.setSoTimeout(5000);
             
-            OutputStream out = socket.getOutputStream();
             InputStream in = socket.getInputStream();
+            OutputStream out = socket.getOutputStream();
             
-            out.write( (studentCode+";"+qCode).getBytes() );
+            //send
+            String sendString = "HellowWorld";
+            byte[] sendBytes = sendString.getBytes();
+            out.write(sendBytes, 0, sendBytes.length);
             out.flush();
             
-            byte[] data = new byte[1024];
-            int length = in.read(data);
-            String receiveString = new String(data, 0 , length);
-            System.out.println(receiveString);
+            //receive
+            byte[] receivedBytes = new byte[9086];
+            in.read(sendBytes);
+            String receivedString = new String(receivedBytes, 0,receivedBytes.length);
             
-            String result = "";
             
-            out.write(result.getBytes());
-            out.flush();
-            
-        }
-        catch(Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
