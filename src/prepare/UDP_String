@@ -1,0 +1,40 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Other/File.java to edit this template
+ */
+package prepare;
+
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+
+/**
+ *
+ * @author dinhh
+ */
+public class UDP_String {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        try(DatagramSocket socket = new DatagramSocket()) {
+            
+            InetAddress serverAddress = InetAddress.getByName("203.162.10.109");
+            
+            byte[] receivedBytes = new byte[9086];
+            DatagramPacket receivedPacket = new DatagramPacket(receivedBytes, receivedBytes.length);
+            socket.receive(receivedPacket);
+            String receivedString = new String(receivedPacket.getData(), 0,receivedPacket.getLength());
+            String[] parts = receivedString.split(";");
+            
+            byte[] sentBytes = new byte[9086];
+            DatagramPacket sentPacket = new DatagramPacket(sentBytes,sentBytes.length , serverAddress, 2208);
+            socket.send(sentPacket);
+            
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
