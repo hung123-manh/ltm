@@ -1,0 +1,41 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Other/File.java to edit this template
+ */
+package RMI;
+
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+/**
+ *
+ * @author dinhh
+ */
+public class RMI_Byte_XOR {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        try {
+            Registry registry = LocateRegistry.getRegistry("203.162.10.109");
+            ByteService service = (ByteService) registry.lookup("RMIByteService");
+            
+            byte[] receivedBytes = service.requestData("B22DCDT147", "qh9Xbcgz");
+            byte[] keyBytes = "PTIT".getBytes();
+            
+            System.out.println(receivedBytes.length);
+            for(int i=0; i<receivedBytes.length;i++)
+            {
+                System.out.println(i);
+                System.out.println(receivedBytes[i]);
+                receivedBytes[i] = (byte) (receivedBytes[i] ^ keyBytes[i%keyBytes.length]);
+            }
+            
+            service.submitData("B22DCDT147", "qh9Xbcgz", receivedBytes);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
