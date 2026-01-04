@@ -17,36 +17,26 @@ public class TCP_Data {
     
     public static void main(String[] args) {
         
-        String serverHost = "203.162.10.109"; // hoặc IP server
-        int serverPort = 2207;
-        String studentCode = "B22DCDT147"; // đổi theo mã sinh viên của bạn
-        String qCode = "O4PersEA";
-        
-        try (Socket socket = new Socket())
-        {
-            socket.connect(new InetSocketAddress(serverHost, serverPort));
+       try(Socket socket = new Socket()) {
+            
+            socket.connect( new InetSocketAddress("203.162.10.109", 2208 ));
             socket.setSoTimeout(5000);
             
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream(socket.getInputStream());
+            DataInputStream in = new DataInputStream( socket.getInputStream() );
+            DataOutputStream out = new DataOutputStream( socket.getOutputStream() );
             
-            // --- a. Gửi mã sinh viên + qCode ---
-            String request = studentCode + ";" + qCode;
-            out.writeUTF(request);
+            //Send
+            out.writeInt(5);
+            out.writeUTF("Hello World");
             out.flush();
-            System.out.println("Sent: " + request);
             
-            //Nhận Data
-            String sentData = in.readUTF(); //Dang String
+            //receive
+            String receivedString = in.readUTF();
+            Integer i = in.readInt();
             
-
-
-            // --- d. Đóng kết nối ---
-            socket.close();
-        }
-        catch(Exception e)
-        {
             
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
     
