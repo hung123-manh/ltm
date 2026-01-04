@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 /**
@@ -20,31 +21,24 @@ public class TCP_Character {
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        try(Socket socket = new Socket())
-        {
-          String serverHost = "203.162.10.109"; // hoặc IP server
-            int serverPort = 2208;
-            String studentCode = "B22DCDT147"; // đổi theo mã sinh viên của bạn
-            String qCode = "QZkzEjhP"; 
+        try(Socket socket = new Socket()) {
             
-            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socket.connect( new InetSocketAddress("203.162.10.109", 2208) );
+            socket.setSoTimeout(5000);
             
-            // --- a. Gửi mã sinh viên + qCode ---
-            String request = studentCode + ";" + qCode;
-            writer.write(request);
-            writer.newLine(); // quan trọng để server nhận đúng
-            writer.flush();
-            System.out.println("Sent: " + request);
+            BufferedWriter out = new BufferedWriter( new OutputStreamWriter( socket.getOutputStream() ) );
+            BufferedReader in = new BufferedReader( new InputStreamReader(socket.getInputStream()) );
             
-            // --- b. Nhận dữ liệu từ server ---
-            String response = reader.readLine(); // ví dụ: danh sách tên miền
-            System.out.println("Received: " + response);
+            String sendString = "Hello";
+            //send
+            out.write(sendString);
+            out.newLine();
+            out.flush();
             
-                
-        }
-        catch(Exception e)
-        {
+            //receive
+            String receivedString = in.readLine();
+            
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
