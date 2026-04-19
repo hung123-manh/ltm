@@ -23,11 +23,11 @@ public class UDP_Object_Laptop_saiNameQuanity {
      */
     public static void main(String args[]) {
         
-        String studentCode = "B22DCDT147"; // thay bằng mã của bạn
+        String studentCode = "B22DCAT134"; // thay bằng mã của bạn
         String qCode = "gSGu4asI";         // thay bằng mã câu hỏi
         String message = ";" + studentCode + ";" + qCode;
 
-        String serverIp = "203.162.10.109"; // đổi thành IP của server thật
+        String serverIp = "ptit.store"; // đổi thành IP của server thật
         int Port = 2209;
         int serverPort = 2209;
         
