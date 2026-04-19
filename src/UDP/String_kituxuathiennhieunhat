@@ -1,0 +1,90 @@
+package UDP;
+
+import java.net.*;
+import java.util.*;
+
+public class LRm0VFAQ {
+
+    public static void main(String[] args) {
+
+        try {
+
+            String serverHost = "ptit.store";
+            int serverPort = 2208;
+
+            String studentCode = "B22DCAT134";
+            String qCode = "LRm0VFAQ";
+
+            DatagramSocket client = new DatagramSocket();
+            client.setSoTimeout(5000);
+
+            InetAddress serverAddress = InetAddress.getByName(serverHost);
+
+            // gửi ;studentCode;qCode
+            String message = ";" + studentCode + ";" + qCode;
+
+            DatagramPacket sendPacket = new DatagramPacket(
+                    message.getBytes(),
+                    message.length(),
+                    serverAddress,
+                    serverPort
+            );
+
+            client.send(sendPacket);
+
+            byte[] buffer = new byte[2048];
+            DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+
+            client.receive(receivePacket);
+
+            String response = new String(receivePacket.getData(),0,receivePacket.getLength());
+
+            String[] parts = response.split(";");
+            String requestId = parts[0];
+            String data = parts[1];
+
+            Map<Character,Integer> map = new HashMap<>();
+
+            for(char c : data.toCharArray()){
+                map.put(c,map.getOrDefault(c,0)+1);
+            }
+
+            char maxChar = data.charAt(0);
+            int maxCount = 0;
+
+            for(char c : data.toCharArray()){
+                int count = map.get(c);
+                if(count > maxCount){
+                    maxCount = count;
+                    maxChar = c;
+                }
+            }
+
+            StringBuilder result = new StringBuilder();
+
+            result.append(requestId).append(";").append(maxChar).append(":");
+
+            for(int i=0;i<data.length();i++){
+                if(data.charAt(i)==maxChar){
+                    result.append(i+1).append(",");
+                }
+            }
+
+            byte[] sendData = result.toString().getBytes();
+
+            DatagramPacket resultPacket = new DatagramPacket(
+                    sendData,
+                    sendData.length,
+                    serverAddress,
+                    serverPort
+            );
+
+            client.send(resultPacket);
+
+            client.close();
+
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+}
