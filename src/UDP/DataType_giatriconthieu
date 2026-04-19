@@ -1,0 +1,81 @@
+package UDP;
+
+import java.net.*;
+import java.util.*;
+
+public class xpIrFnz5 {
+    public static void main(String[] args) {
+        try {
+            String serverHost = "ptit.store";
+            int serverPort = 2207;
+            String studentCode = "B22DCAT134";
+            String qCode = "xpIrFnz5";
+
+            DatagramSocket client = new DatagramSocket();
+            client.setSoTimeout(5000);
+
+            InetAddress serverAddress = InetAddress.getByName(serverHost);
+
+            String message = ";" + studentCode + ";" + qCode;
+            System.out.println("Send: " + message);
+
+            DatagramPacket sendPacket = new DatagramPacket(
+                    message.getBytes(),
+                    message.length(),
+                    serverAddress,
+                    serverPort
+            );
+            client.send(sendPacket);
+
+            byte[] buffer = new byte[1024];
+            DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+
+            System.out.println("Waiting for server response...");
+            client.receive(receivePacket);
+
+            String response = new String(receivePacket.getData(), 0, receivePacket.getLength());
+            System.out.println("Received: " + response);
+
+            String[] parts = response.split(";");
+            String requestId = parts[0];
+            int n = Integer.parseInt(parts[1]);
+
+            String[] arr = parts[2].split(",");
+            Set<Integer> set = new HashSet<>();
+
+            for (String s : arr) {
+                set.add(Integer.parseInt(s));
+            }
+
+            StringBuilder result = new StringBuilder();
+            result.append(requestId).append(";");
+
+            boolean first = true;
+            for (int i = 1; i <= n; i++) {
+                if (!set.contains(i)) {
+                    if (!first) result.append(",");
+                    result.append(i);
+                    first = false;
+                }
+            }
+
+            System.out.println("Send back: " + result);
+
+            byte[] sendData = result.toString().getBytes();
+            DatagramPacket resultPacket = new DatagramPacket(
+                    sendData,
+                    sendData.length,
+                    serverAddress,
+                    serverPort
+            );
+
+            client.send(resultPacket);
+            client.close();
+
+            System.out.println("Done");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
